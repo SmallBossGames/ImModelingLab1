@@ -12,7 +12,7 @@ namespace ImModelingLab1
 {
     public partial class Form1 : Form
     {
-        const int outputCount=100;
+        const int outputCount=20;
         const double accuracy = 0.0000000001;
 
         Random random;
@@ -27,8 +27,9 @@ namespace ImModelingLab1
 
         private void button1_Click(object sender, EventArgs e)
         {
+            int k = (int)Math.Floor(3.3 * Math.Log10(double.Parse(CountTextBox.Text)) + 1);
             double[] values = CalcuateValues(Int32.Parse(CountTextBox.Text), Double.Parse(LambdaTextBox.Text));
-            Tuple<double, uint[]> tulpe = CalculateRow(values, outputCount);
+            Tuple<double, uint[]> tulpe = CalculateRow(values, k);
             DrawChart(tulpe.Item1,tulpe.Item2);
         }
 
@@ -188,9 +189,38 @@ namespace ImModelingLab1
 
         private void button2_Click(object sender, EventArgs e)
         {
+            int k = (int) Math.Floor(3.3*Math.Log10(double.Parse(CountTextBox.Text))+1);
             double[] values = GetValuesMain(double.Parse(LambdaTextBox.Text), int.Parse(CountTextBox.Text));
-            Tuple<double, uint[]> tulpe = CalculateRow(values, outputCount);
+            Tuple<double, uint[]> tulpe = CalculateRow(values, k);
             DrawChart(tulpe.Item1, tulpe.Item2);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            int k = (int)Math.Floor(3.3 * Math.Log10(double.Parse(CountTextBox.Text)) + 1);
+            double[] a1 = GetValuesMain(double.Parse(LambdaTextBox.Text), int.Parse(CountTextBox.Text));
+            double[] a2 = CalcuateValues(Int32.Parse(CountTextBox.Text), Double.Parse(LambdaTextBox.Text));
+            Array.Sort(a1);
+            Array.Sort(a2);
+            smirnovTextBox.Text = GetSmirnov(a1, a2).ToString();
+        }
+
+        private double GetSmirnov(double[] values1, double[] values2)
+        {
+            int val1 = values1.Length;
+            int val2 = values2.Length;
+
+            if (val1 != val2) throw new Exception("Arrays is incorrect!");
+
+            double maXD = 0;
+
+            for(int i=0; i< val1; i++)
+            {
+                double newD = Math.Abs(values1[i] - values2[i]);
+                if (maXD < newD) maXD = newD;
+            }
+
+            return maXD;
         }
     }
 }
